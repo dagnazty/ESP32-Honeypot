@@ -39,6 +39,8 @@ Thanks to hosseios for the video !
 5. Telnet honeypot starts on port 23, listening for attackers
 6. All captured inputs will be logged and optionally sent to your webhook
 
+If the AP is not near it, mode configuration is enabled and web portal is accessible.
+
 ---
 
 ## 📁 SPIFFS Structure
