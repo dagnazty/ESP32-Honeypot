@@ -3,7 +3,7 @@
 This project is a standalone Telnet honeypot for the ESP32 platform. It emulates a realistic Linux shell environment to attract and analyze unauthorized access attempts. It features a full web-based configuration UI, persistent storage using SPIFFS, and webhook-based alerting that can be integrated with Discord, Telegram, Signal, WhatsApp, or SIEM platforms.
 <div align="center">
   
-  Here the demo video on Evil-Carputer:
+  Here the demo video on Evil-Cardputer:
   
   <a href="https://youtube.com/shorts/P73wcEghjso" >
       <img alt="Demo Video" src="https://img.youtube.com/vi/P73wcEghjso/0.jpg" width="33%" height="33%"/>
