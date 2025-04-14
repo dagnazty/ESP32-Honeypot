@@ -10,6 +10,15 @@ This project is a standalone Telnet honeypot for the ESP32 platform. It emulates
   </a>
 
 Thanks to hosseios for the video ! 
+
+---
+
+Webui :  
+<img alt="WebUi" src="./WebUi.png" width="33%" height="33%"/>
+
+
+Alerts on Discord :   
+<img alt="WebUi" src="./WebHookDiscord.jpg" width="33%" height="33%"/>
 </div>
 
 ---
