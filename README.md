@@ -1,6 +1,16 @@
 ## ESP32 Honeypot with Web UI, SPIFFS Persistence and Webhook Alerts
 
 This project is a standalone Telnet honeypot for the ESP32 platform. It emulates a realistic Linux shell environment to attract and analyze unauthorized access attempts. It features a full web-based configuration UI, persistent storage using SPIFFS, and webhook-based alerting that can be integrated with Discord, Telegram, Signal, WhatsApp, or SIEM platforms.
+<div align="center">
+  
+  Here the demo video on Evil-Carputer:
+  
+  <a href="https://youtube.com/shorts/P73wcEghjso" >
+      <img alt="Demo Video" src="https://img.youtube.com/vi/P73wcEghjso/0.jpg" width="33%" height="33%"/>
+  </a>
+
+Thanks to hosseios for the video ! 
+</div>
 
 ---
 
@@ -15,14 +25,6 @@ This project is a standalone Telnet honeypot for the ESP32 platform. It emulates
 - Offline mode with Wi-Fi Access Point for initial setup
 - Fake file system structure with secrets to lure attackers
 - Modular code, compatible with any ESP32 board (no M5Stack dependency)
-
----
-
-## 📷 Screenshots
-
-- Honeypot terminal: emulated Ubuntu 20.04 shell
-- Web UI: sleek form to configure Wi-Fi and webhook
-- Logs & config viewer directly from browser
 
 ---
 
