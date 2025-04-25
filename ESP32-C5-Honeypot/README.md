@@ -2,10 +2,6 @@
 
 This project is a standalone Telnet honeypot for the ESP32-C5 platform. It emulates a realistic Linux shell environment to attract and analyze unauthorized access attempts. It features a full web-based configuration UI, persistent storage using SPIFFS, and webhook-based alerting that can be integrated with Discord, Telegram, Signal, WhatsApp, or SIEM platforms.
 
-Alerts on Discord :   
-<img alt="WebUi" src="./WebHookDiscord.jpg" width="33%" height="33%"/>
-</div>
-
 ---
 
 ## ✅ Features
@@ -21,11 +17,13 @@ Alerts on Discord :
 - Built using the ESP-IDF framework for ESP32-C5
 
 ---
+
 ## 🧩 Compatible Devices
 
 - **ESP32-C5** development boards
 
 ---
+
 ## ⚙️ Installation
 
 ### Prerequisites
@@ -80,13 +78,13 @@ Example payload (JSON, sent as POST):
 
 ### Webhook Options:
 
-**Raspberry Pi Relay**:
-   - Set up a Python Flask server on a Raspberry Pi that accepts HTTP requests from the ESP32
-   - The relay server forwards the alerts to Discord or other platforms using HTTPS
-   - This avoids SSL/TLS limitations on the ESP32
-   - Example webhook URL format: `http://your-raspberry-pi-ip:8080/webhook`
+**Using webhook.site**:
+   - Create a free endpoint at [webhook.site](https://webhook.site)
+   - Copy the unique URL provided
+   - Paste this URL in the honeypot configuration
+   - View incoming alerts in real-time on the webhook.site dashboard
 
-Note: Due to ESP32 SSL/TLS limitations, services that enforce HTTPS (like Discord) require using the Raspberry Pi relay method.
+Note: Due to ESP32 SSL/TLS limitations, services that enforce HTTPS (like Discord) require using webhook.site. webhook.site supports HTTP without redirects, making it compatible with ESP32's HTTP client limitations.
 
 ---
 
