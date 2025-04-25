@@ -1,0 +1,19 @@
+idf_component_register(
+    SRCS 
+        "src/honeypot.c"
+        "src/telnet_server.c"
+        "src/web_server.c"
+        "src/file_system.c"
+        "src/config.c"
+        "src/html_content.c"
+    INCLUDE_DIRS 
+        "include"
+    REQUIRES 
+        nvs_flash
+        esp_http_server
+        esp_wifi
+        esp_http_client
+        spiffs
+        json
+        mbedtls
+) 
