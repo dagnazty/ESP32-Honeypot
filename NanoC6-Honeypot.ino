@@ -1,10 +1,20 @@
+#include <M5NanoC6.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <SPIFFS.h>
 #include <HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include <Adafruit_NeoPixel.h>
 #include <vector>
+
+
+#define NUM_LEDS 1
+
+#define RGB_DATA_PIN 20
+#define RGB_PWR_PIN  19
+
+Adafruit_NeoPixel strip(NUM_LEDS, RGB_DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 String ssid, password, WebhookURL;
 const char* configPath = "/config.json";
@@ -317,6 +327,8 @@ void setupWebUI() {
   Serial.println("[+] Connect to Wi-Fi: HoneypotConfig");
   Serial.println("[+] Password        : HoneyPotConfig123");
   Serial.println("[+] Web Interface   : http://" + WiFi.softAPIP().toString());
+  strip.setPixelColor(0, strip.Color(0, 0, 255));  // Jaune
+  strip.show();
 
   webServer.begin();
 
@@ -365,6 +377,12 @@ void logCommand(String ip, uint16_t port, String command) {
     http.POST(msg);
     http.end();
   }
+
+  for (int i = 0; i < 2; i++) {
+    strip.setPixelColor(0, strip.Color(255, 0, 0)); strip.show(); delay(150);
+    strip.setPixelColor(0, strip.Color(0, 0, 0)); strip.show(); delay(150);
+  }
+  strip.setPixelColor(0, strip.Color(255, 0, 0)); strip.show();
 }
 
 
@@ -991,7 +1009,7 @@ void handleHoneypotClient(WiFiClient client) {
 
 
 /* ===================================================================== */
-/*  Main honeypot loop – Nmap‑friendly banners (almost working on it)     */
+/*  Main honeypot loop – Nmap‑friendly banners                           */
 /* ===================================================================== */
 void honeypotLoop() {
   /* ---------- Helper lambdas ---------------------------------------- */
@@ -1016,7 +1034,7 @@ void honeypotLoop() {
   if (WiFiClient c = sshServer.available()) {
     if (!c) return;
     String ip = c.remoteIP().toString();
-    c.print("SSH-2.0-OpenSSH_8.5p1 Debian-1");
+    c.print("SSH-2.0-OpenSSH_8.5p1 Debian-1\r\n");
     logCommand(ip, 22, dumpBytes(c));
     /* keep the channel open a bit so nmap --script ssh-hostkey can
        finish the key‑exchange probe                           */
@@ -1142,9 +1160,67 @@ void honeypotLoop() {
   delay(10);
 }
 
+
+
+
+
+
+
+void rainbowCycleStep(uint8_t step) {
+  uint8_t r, g, b;
+  uint8_t segment = step / 85;
+  uint8_t offset = step % 85 * 3;
+
+  switch (segment) {
+    case 0:
+      r = 255 - offset;
+      g = offset;
+      b = 0;
+      break;
+    case 1:
+      r = 0;
+      g = 255 - offset;
+      b = offset;
+      break;
+    case 2:
+      r = offset;
+      g = 0;
+      b = 255 - offset;
+      break;
+  }
+
+  strip.setPixelColor(0, strip.Color(r, g, b));
+  strip.show();
+}
+
+
 void setup() {
   Serial.begin(115200);
+  NanoC6.begin();          // initialise le bouton
+
+  pinMode(RGB_PWR_PIN, OUTPUT);
+  digitalWrite(RGB_PWR_PIN, HIGH);
+  strip.begin();
+  strip.show();
+  strip.setPixelColor(0, strip.Color(255, 255, 255));
+  strip.show();
+  delay(3000);
+  NanoC6.update();         // lit son état une première fois
+
+  /* ---------- 1. test du bouton au démarrage ---------- */
+  if (NanoC6.BtnA.isPressed()) {          // maintenu appuyé ?
+    Serial.println("Boot: BtnA held → WebUI mode");
+    initSPIFFS();                       // comme d’habitude
+    strip.setPixelColor(0, strip.Color(0, 0, 255)); // LED bleue
+    strip.show();
+    setupWebUI();                       // active le point‑d’accès + interface
+    return;                             // on NE lance PAS le honeypot
+  }
+
   initSPIFFS();
+
+  strip.setPixelColor(0, strip.Color(0, 0, 0));    // Off
+  strip.show();
 
   if (!loadConfig()) {
     setupWebUI();
@@ -1156,17 +1232,33 @@ void setup() {
 
 
   unsigned long startTime = millis();
+  uint8_t rainbowStep = 0;
+
   while (WiFi.status() != WL_CONNECTED && millis() - startTime < 5000) {
-    delay(1000);
+    rainbowCycleStep(rainbowStep);
+    rainbowStep++;
+    delay(4);  // 1000ms / 256 steps ≈ 4ms per step
   }
 
 
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("\n[!] Wi-Fi connection failed");
-    setupWebUI();
+
+    for (int i = 0; i < 6; i++) {
+      strip.setPixelColor(0, strip.Color(0, 0, 255));  // Blue
+      strip.show();
+      delay(200);
+      strip.setPixelColor(0, strip.Color(0, 0, 0));    // Off
+      strip.show();
+      delay(200);
+    }
+    setupWebUI();  // Fall back to AP mode
     return;
   }
+
+  strip.setPixelColor(0, strip.Color(0, 255, 0));  // Green
+  strip.show();
 
   Serial.println("\n[+] Connected. IP: " + WiFi.localIP().toString());
   startHoneypot();
